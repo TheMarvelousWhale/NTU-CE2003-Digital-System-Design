@@ -15,7 +15,7 @@ module top_module_lab2(input clk, rst, write_en, save_data, show_reg,
 			else begin 
 				if (save_data)
 					data_reg <= d_in;
-			end 
+				end 
 			
 			if (write_en)
 				ramdata[addr] <= data_reg;

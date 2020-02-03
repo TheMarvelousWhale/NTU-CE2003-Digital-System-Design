@@ -1,41 +1,29 @@
-`timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    10:29:24 10/10/2012 
-// Design Name: 
-// Module Name:    vsevenseg 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
-module sevenseg(
-    input [3:0] a, 
-	 input seg_clk, seg_switch,
-	 output seg_Tg_out,
-    output reg [6:0] seg
-    );
+//Module  : clock generator and 7seg display
+//Function : Generates 400 Hz clock (o_clk) from 100 Mhz clock (i_clk)
+// and ALSO displays the bench number on the 7 seg display
+
+module clkGen_7seg(input i_clk, output o_clk, seg_Tg_out, output reg [6:0] seg);
+
 
 // ******* EDIT the seat number below ******* //
 wire [3:0] seat_Hi =4'd2;	// the High number (decimal 2)
 wire [3:0] seat_Lo =4'd5;	// the Low number (decimal 5)
 // ***************************************** //
 
-wire [3:0] num, num1, num2;
+reg [20:0] counter = 21'd0;
+wire [3:0] num, num1;
 
-assign num1 = seg_clk ? 4'd0 : a; 
-assign num2 = seg_clk ? seat_Hi : seat_Lo; // toggle between seat number
-assign num = ~seg_switch ? num1 : num2; 	// state should be displayed if no sel button pressed
-assign seg_Tg_out = seg_clk;	// the output to control the toggling of the 7 seg displays (
+assign num = seg_clk ? seat_Hi : seat_Lo; // toggle between seat number
+assign seg_Tg_out = seg_clk;	// the output to control the toggling of the 7 seg displays
+
+assign seg_clk = counter[20];	// aprox 100Hz
+assign o_clk = counter[10];	// The slow clock, aprox 100KHz
+
+// The clock
+always @(posedge i_clk)
+begin
+    counter <= counter + 1'b1;
+end
 
 always @*
 begin
